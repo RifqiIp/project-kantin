@@ -1,0 +1,10 @@
+CREATE TABLE menus (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) UNIQUE NOT NULL,
+  price INT NOT NULL CHECK (price >= 0),
+  type VARCHAR(50) NOT NULL,
+  qty INT NOT NULL CHECK (qty >= 0),
+  sold_qty INT DEFAULT 0 CHECK (sold_qty >= 0),
+  status VARCHAR(20) NOT NULL DEFAULT 'draft',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

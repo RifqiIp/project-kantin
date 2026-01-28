@@ -1,10 +1,8 @@
 const express = require("express");
-
 const app = express();
+const menusRoute = require("./routes/menus.route");
 
 app.use(express.json());
-
-const menusRoute = require("./routes/menus.route");
 
 app.use("/menus", menusRoute);
 
@@ -12,7 +10,6 @@ app.get("/", (req, res) => {
   console.log("Root endpoint hit");
   res.send("Server Kantin Running");
 });
-
 
 module.exports = app;
 

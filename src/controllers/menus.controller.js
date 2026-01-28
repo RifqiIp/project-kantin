@@ -1,20 +1,60 @@
-const Cafetaria = require("../cafetaria");
+// const Cafetaria = require("../cafetaria");
 
-const cafe = new Cafetaria("Warung Sedap");
+// const cafe = new Cafetaria("Warung Sedap");
 
-exports.getMenus = (req, res) => {
-  const result = cafe.searchMenu(req.query);
-  res.json(result);
-};
+const menuService = require("../services/menus.service");
 
-exports.addMenu = (req, res) => {
+exports.getMenus = async (req, res) => {
   try {
-    const result = cafe.addMenu(req.body);
-    res.status(201).json(result);
+    const menus = await menuService.getAllMenus(); // <-- panggil model
+    res.json(menus); // kirim ke client
   } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
+
+exports.getMenuById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const menu = await menuService.getMenuById(id);
+
+    res.json(menu);
+  } catch (err) {
+    res.status(404).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.createMenu = async (req, res) => {
+  try {
+    const menu = await menuService.createMenu(req.body); // panggil model
+    res.status(201).json({ success: true, data: menu });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+// exports.getMenus = (req, res) => {
+//   const result = cafe.searchMenu(req.query);
+//   res.json(result);
+// };
+
+// exports.addMenu = async (req, res) => {
+//   try {
+//     const menus = await Menu.addMenu();
+//     res.status(201).json(menus);
+//   } catch (err) {
+//     res.status(400).json({ success: false, message: err.message });
+//   }
+// };
 
 exports.restockMenu = (req, res) => {
   try {

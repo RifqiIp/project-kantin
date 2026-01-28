@@ -4,7 +4,7 @@ const controller = require("../controllers/menus.controller");
 const router = express.Router();
 
 router.get("/", controller.getMenus);
-router.post("/", controller.addMenu);
+router.post("/", controller.createMenu);
 
 router.post("/:id/restock", controller.restockMenu);
 router.post("/:id/sell", controller.sellMenu);
