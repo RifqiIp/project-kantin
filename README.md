@@ -1,7 +1,7 @@
 # Project Kantin API
 
-Simple REST API untuk mengelola menu kantin (stok, penjualan, status).
-Project ini dibuat sebagai latihan backend fundamental menggunakan Node.js dan Express.
+Simple REST API untuk mengelola menu kantin (stok, penjualan, status).  
+Project ini dibuat sebagai latihan **backend fundamental hingga intermediate** menggunakan **Node.js, Express, dan PostgreSQL** dengan arsitektur berlapis.
 
 ---
 
@@ -9,8 +9,23 @@ Project ini dibuat sebagai latihan backend fundamental menggunakan Node.js dan E
 
 - Node.js
 - Express.js
+- PostgreSQL
 - JavaScript (CommonJS)
 - Git & GitHub
+- dotenv
+
+---
+
+## Architecture Overview
+
+Project ini menggunakan pola **layered architecture**:
+
+Controller → Service → Repository → Database
+
+- Controller: handle HTTP request & response  
+- Service: business logic & validation  
+- Repository: query ke database (PostgreSQL)  
+- Database: PostgreSQL  
 
 ---
 
@@ -22,6 +37,10 @@ project-kantin/
 ├── server.js
 ├── package.json
 ├── package-lock.json
+├── .env.example
+│
+├── database/
+│   └── kantin.sql
 │
 ├── src/
 │   ├── app.js
@@ -32,7 +51,14 @@ project-kantin/
 │   ├── controllers/
 │   │   └── menus.controller.js
 │   │
-│   ├── cafetaria.js
+│   ├── services/
+│   │   └── menus.service.js
+│   │
+│   ├── repositories/
+│   │   └── menus.repository.js
+│   │
+│   ├── config/
+│   │   └── db.js
 │   │
 │   └── constants/
 │       └── status.js
@@ -40,16 +66,35 @@ project-kantin/
 
 ---
 
-## Installation & Run
+## Database
 
-Install dependencies:
-```bash
-npm install
+Project ini menggunakan **PostgreSQL**.
+
+Struktur database dapat dilihat di:
+```
+database/kantin.sql
 ```
 
-Run server:
+---
+
+## Environment Variables
+
+Buat file `.env`:
+
+```
+DB_USER=kantin_user
+DB_PASSWORD=your_password
+DB_NAME=kantin_db
+DB_PORT=5432
+```
+
+---
+
+## Installation & Run
+
 ```bash
-node server.js
+npm install
+npm run dev
 ```
 
 Server berjalan di:
@@ -76,14 +121,13 @@ http://localhost:3000
 
 ## Notes
 
-- Data masih menggunakan in-memory (tanpa database)
-- Cocok untuk latihan backend dasar
-- Siap dikembangkan ke database di tahap selanjutnya
+- Migrasi dari in-memory ke PostgreSQL
+- Fokus backend & clean architecture
+- Cocok untuk portfolio Junior Backend Developer
 
 ---
 
 ## Author
 
-Rifqi Pratama
+Rifqi Pratama  
 Junior Backend Developer
-
