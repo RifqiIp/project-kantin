@@ -35,8 +35,29 @@ const createMenu = async (data) => {
   return await menusRepository.createMenu(data);
 };
 
+const updateMenu = async (id, data) => {
+  const existing = await menusRepository.getMenuById(id);
+  if (!existing) {
+    throw new Error("Menu not found");
+  }
+
+  if (data.name) {
+    const duplicate = await menusRepository.getMenuByName(data.name);
+    if (duplicate && duplicate.id !== id) {
+      throw new Error("Nama menu sudah digunakan");
+    }
+  }
+
+  return await menusRepository.updateMenu(id, {
+    name: data.name ?? existing.name,
+    price: data.price ?? existing.price,
+    type: data.type ?? existing.type,
+  });
+};
+
 module.exports = {
   getAllMenus,
   getMenuById,
   createMenu,
+  updateMenu,
 };

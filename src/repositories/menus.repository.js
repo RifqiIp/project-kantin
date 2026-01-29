@@ -28,9 +28,19 @@ const getMenuByName = async (name) => {
   return result.rows[0]; // undefined jika tidak ada
 };
 
+const updateMenu = async (id, data) => {
+  const result = await db.query(
+    `UPDATE menus SET name = $1, price = $2, type = $3 WHERE id = $4 RETURNING *`,
+    [data.name, data.price, data.type, id],
+  );
+
+  return result.rows[0]
+};
+
 module.exports = {
   getAllMenus,
   getMenuById,
   createMenu,
   getMenuByName,
+  updateMenu
 };
