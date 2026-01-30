@@ -47,6 +47,34 @@ exports.updateMenu = async (req, res) => {
   }
 };
 
+exports.restockMenu = async (req, res) => {
+  try {
+    const { qty } = req.body;
+    const menu = await menuService.restockMenu(req.params.id, qty);
+
+    res.json({ success: true, data: menu });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.updateQty = async (req, res) => {
+  try {
+    const { qty } = req.body;
+    const menu = await menuService.updateQty(req.params.id, qty);
+
+    res.json({ success: true, data: menu });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 // exports.restockMenu = (req, res) => {
 //   try {
 //     const id = Number(req.params.id);

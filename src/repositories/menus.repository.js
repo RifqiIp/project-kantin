@@ -34,7 +34,24 @@ const updateMenu = async (id, data) => {
     [data.name, data.price, data.type, id],
   );
 
-  return result.rows[0]
+  return result.rows[0];
+};
+
+const restockMenu = async (id, qty) => {
+  const result = await db.query(
+    `UPDATE menus SET qty = qty + $1 where id = $2 RETURNING *`,
+    [qty, id],
+  );
+
+  return result.rows[0];
+};
+const updateQty = async (id, qty) => {
+  const result = await db.query(
+    `UPDATE menus SET qty = $1 where id = $2 RETURNING *`,
+    [qty, id],
+  );
+
+  return result.rows[0];
 };
 
 module.exports = {
@@ -42,5 +59,7 @@ module.exports = {
   getMenuById,
   createMenu,
   getMenuByName,
-  updateMenu
+  updateMenu,
+  restockMenu,
+  updateQty,
 };

@@ -55,9 +55,29 @@ const updateMenu = async (id, data) => {
   });
 };
 
+const restockMenu = async (id, qty) => {
+  if (qty <= 0) throw new Error("Qty restock harus lebih dari 0");
+
+  const menu = await menusRepository.getMenuById(id);
+  if (!menu) throw new Error("Menu not found");
+
+  return await menusRepository.restockMenu(id, qty);
+};
+
+const updateQty = async (id, qty) => {
+  if (qty <= 0) throw new Error("Qty restock harus lebih dari 0");
+
+  const menu = await menusRepository.getMenuById(id);
+  if (!menu) throw new Error("Menu not found");
+
+  return await menusRepository.updateQty(id, qty);
+};
+
 module.exports = {
   getAllMenus,
   getMenuById,
   createMenu,
   updateMenu,
+  restockMenu,
+  updateQty
 };
