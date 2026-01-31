@@ -3,7 +3,8 @@ const menuService = require("../services/menus.service");
 exports.getMenus = async (req, res) => {
   try {
     const menus = await menuService.getAllMenus(); // <-- panggil model
-    res.json(menus); // kirim ke client
+
+    res.status(200).json({ success: true, data: menus });
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -14,10 +15,10 @@ exports.getMenus = async (req, res) => {
 
 exports.getMenuById = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = Number(req.params.id);
     const menu = await menuService.getMenuById(id);
 
-    res.json(menu);
+    res.status(200).json({ success: true, data: menu });
   } catch (err) {
     res.status(404).json({
       success: false,
@@ -29,6 +30,7 @@ exports.getMenuById = async (req, res) => {
 exports.createMenu = async (req, res) => {
   try {
     const menu = await menuService.createMenu(req.body); // panggil model
+
     res.status(201).json({ success: true, data: menu });
   } catch (err) {
     res.status(400).json({
@@ -40,19 +42,35 @@ exports.createMenu = async (req, res) => {
 
 exports.updateMenu = async (req, res) => {
   try {
-    const menu = await menuService.updateMenu(req.params.id, req.body);
-    res.json({ success: true, data: menu });
+    const id = Number(req.params.id);
+    const menu = await menuService.updateMenu(id, req.body);
+
+    res.status(200).json({ success: true, data: menu });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 };
 
+exports.purgeMenu = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const menu = await menuService.purgeMenu(id);
+    res.status(200).json({ success: true, data: menu });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 exports.restockMenu = async (req, res) => {
   try {
+    const id = Number(req.params.id);
     const { qty } = req.body;
-    const menu = await menuService.restockMenu(req.params.id, qty);
+    const menu = await menuService.restockMenu(id, qty);
 
-    res.json({ success: true, data: menu });
+    res.status(200).json({ success: true, data: menu });
   } catch (err) {
     res.status(400).json({
       success: false,
@@ -63,10 +81,64 @@ exports.restockMenu = async (req, res) => {
 
 exports.updateQty = async (req, res) => {
   try {
+    const id = Number(req.params.id);
     const { qty } = req.body;
-    const menu = await menuService.updateQty(req.params.id, qty);
+    const menu = await menuService.updateQty(id, qty);
 
-    res.json({ success: true, data: menu });
+    res.status(200).json({ success: true, data: menu });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.sellMenu = async (req, res) => {
+  try {
+    const { qty } = req.body;
+    const menu = await menuService.sellMenu(req.params.id, qty);
+
+    res.status(200).json({ success: true, data: menu });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.publishMenu = async (req, res) => {
+  try {
+    const menu = await menuService.publishMenu(req.params.id);
+
+    res.status(200).json({ success: true, data: menu });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.inactiveMenu = async (req, res) => {
+  try {
+    const menu = await menuService.inactiveMenu(req.params.id);
+
+    res.status(200).json({ success: true, data: menu });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.archiveMenu = async (req, res) => {
+  try {
+    const menu = await menuService.archiveMenu(req.params.id);
+
+    res.status(200).json({ success: true, data: menu });
   } catch (err) {
     res.status(400).json({
       success: false,

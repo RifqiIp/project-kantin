@@ -1,5 +1,7 @@
 const menusRepository = require("../repositories/menus.repository");
 
+const STATUS = require("../constants/status");
+
 const getAllMenus = async () => {
   return await menusRepository.getAllMenus();
 };
@@ -55,6 +57,17 @@ const updateMenu = async (id, data) => {
   });
 };
 
+const purgeMenu = async (id) => {
+  const menu = await menusRepository.getMenuById(id);
+  if (!menu) throw new Error("Menu not found");
+
+  if (menu.status === STATUS.PUBLISHED) {
+    throw new Error("Published menu cannot be permanently deleted");
+  }
+
+  return await menusRepository.deleteMenuPermanently(id);
+};
+
 const restockMenu = async (id, qty) => {
   if (qty <= 0) throw new Error("Qty restock harus lebih dari 0");
 
@@ -73,11 +86,83 @@ const updateQty = async (id, qty) => {
   return await menusRepository.updateQty(id, qty);
 };
 
+const sellMenu = async (id, qty) => {
+  if (qty <= 0) {
+    throw new Error("Quantity must be greater than zero");
+  }
+
+  const menu = await menusRepository.getMenuById(id);
+  if (!menu) throw new Error("Menu not found");
+
+  if ([STATUS.DRAFT, STATUS.ARCHIVED, STATUS.INACTIVE].includes(menu.status)) {
+    throw new Error("Menu cannot be sold");
+  }
+
+  const updated = await menusRepository.sellMenu(id, qty);
+
+  if (!updated) {
+    throw new Error("Insufficient stock");
+  }
+
+  if (updated.qty === 0) {
+    await menusRepository.updateStatus(id, STATUS.OUT_OF_STOCK);
+  }
+
+  return updated;
+};
+
+const publishMenu = async (id) => {
+  const menu = await menusRepository.getMenuById(id);
+  if (!menu) throw new Error("Menu not found");
+
+  if (menu.status === STATUS.PUBLISHED) {
+    throw new Error("Menu already published");
+  }
+
+  if ([STATUS.ARCHIVED].includes(menu.status)) {
+    throw new Error("Archived menu cannot be published");
+  }
+
+  if (menu.qty <= 0) {
+    throw new Error("Cannot publish menu with empty stock");
+  }
+
+  return await menusRepository.updateStatus(id, STATUS.PUBLISHED);
+};
+
+const inactiveMenu = async (id) => {
+  const menu = await menusRepository.getMenuById(id);
+  if (!menu) throw new Error("Menu not found");
+
+  if (menu.status === STATUS.INACTIVE) {
+    throw new Error("Menu already inactive");
+  }
+
+  return await menusRepository.updateStatus(id, STATUS.INACTIVE);
+};
+
+const archiveMenu = async (id) => {
+  const menu = await menusRepository.getMenuById(id);
+  if (!menu) throw new Error("Menu not found");
+
+  if (menu.status === STATUS.ARCHIVED) {
+    throw new Error("Menu already archived");
+  }
+
+  return await menusRepository.updateStatus(id, STATUS.ARCHIVED);
+};
+
 module.exports = {
   getAllMenus,
   getMenuById,
   createMenu,
   updateMenu,
+  purgeMenu,
+  updateStatus,
   restockMenu,
-  updateQty
+  updateQty,
+  sellMenu,
+  publishMenu,
+  inactiveMenu,
+  archiveMenu,
 };

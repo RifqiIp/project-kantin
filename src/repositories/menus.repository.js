@@ -37,6 +37,14 @@ const updateMenu = async (id, data) => {
   return result.rows[0];
 };
 
+const deleteMenuPermanently = async (id) => {
+  const result = await db.query(`DELETE FROM menus WHERE id = $1 RETURNING *`, [
+    id,
+  ]);
+
+  return result.rows[0];
+};
+
 const restockMenu = async (id, qty) => {
   const result = await db.query(
     `UPDATE menus SET qty = qty + $1 where id = $2 RETURNING *`,
@@ -54,12 +62,32 @@ const updateQty = async (id, qty) => {
   return result.rows[0];
 };
 
+const sellMenu = async (id, qty) => {
+  const result = await db.query(
+    `UPDATE menus SET qty = qty - $1, sold_qty = sold_qty + $1 WHERE id = $2 AND qty >= $1 RETURNING *`,
+    [qty, id],
+  );
+
+  return result.rows[0];
+};
+
+updateStatus = async (id, status) => {
+  const result = await db.query(
+    `UPDATE menus SET status = $1 WHERE id = $2 RETURNING *`,
+    [status, id],
+  );
+  return result.rows[0];
+};
+
 module.exports = {
   getAllMenus,
   getMenuById,
   createMenu,
   getMenuByName,
   updateMenu,
+  deleteMenuPermanently,
   restockMenu,
   updateQty,
+  sellMenu,
+  updateStatus,
 };
