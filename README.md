@@ -1,7 +1,6 @@
-# Project Kantin API
+# Project Kantin Backend API
 
-Simple REST API untuk mengelola menu kantin (stok, penjualan, status).  
-Project ini dibuat sebagai latihan **backend fundamental hingga intermediate** menggunakan **Node.js, Express, dan PostgreSQL** dengan arsitektur berlapis.
+Backend service untuk manajemen menu kantin, stok, dan lifecycle status menu. Dibangun dengan **Node.js, Express, dan PostgreSQL** menggunakan arsitektur **Controller – Service – Repository**.
 
 ---
 
@@ -10,124 +9,124 @@ Project ini dibuat sebagai latihan **backend fundamental hingga intermediate** m
 - Node.js
 - Express.js
 - PostgreSQL
-- JavaScript (CommonJS)
-- Git & GitHub
-- dotenv
-
----
-
-## Architecture Overview
-
-Project ini menggunakan pola **layered architecture**:
-
-Controller → Service → Repository → Database
-
-- Controller: handle HTTP request & response  
-- Service: business logic & validation  
-- Repository: query ke database (PostgreSQL)  
-- Database: PostgreSQL  
+- pg (node-postgres)
+- Nodemon
 
 ---
 
 ## Project Structure
 
 ```
-project-kantin/
+src/
 │
-├── server.js
-├── package.json
-├── package-lock.json
-├── .env.example
-│
-├── database/
-│   └── kantin.sql
-│
-├── src/
-│   ├── app.js
-│   │
-│   ├── routes/
-│   │   └── menus.route.js
-│   │
-│   ├── controllers/
-│   │   └── menus.controller.js
-│   │
-│   ├── services/
-│   │   └── menus.service.js
-│   │
-│   ├── repositories/
-│   │   └── menus.repository.js
-│   │
-│   ├── config/
-│   │   └── db.js
-│   │
-│   └── constants/
-│       └── status.js
+├── controllers/        # Handle HTTP request & response
+├── services/           # Business logic & rules
+├── repositories/       # Database queries
+├── routes/             # API routes
+├── constants/          # Status & enums
+└── app.js
 ```
 
 ---
 
-## Database
+## Menu Lifecycle (Status)
 
-Project ini menggunakan **PostgreSQL**.
+Menu memiliki lifecycle status untuk menjaga konsistensi bisnis:
 
-Struktur database dapat dilihat di:
-```
-database/kantin.sql
-```
-
----
-
-## Environment Variables
-
-Buat file `.env`:
-
-```
-DB_USER=kantin_user
-DB_PASSWORD=your_password
-DB_NAME=kantin_db
-DB_PORT=5432
-```
+| Status         | Deskripsi                                      |
+| -------------- | ---------------------------------------------- |
+| `DRAFT`        | Menu baru, belum bisa dijual                   |
+| `PUBLISHED`    | Menu aktif dan bisa dijual                     |
+| `OUT_OF_STOCK` | Stok habis (otomatis)                          |
+| `INACTIVE`     | Dinonaktifkan sementara                        |
+| `ARCHIVED`     | Soft delete (tidak tampil & tidak bisa dijual) |
 
 ---
 
-## Installation & Run
+## Business Rules
 
-```bash
-npm install
-npm run dev
-```
-
-Server berjalan di:
-```
-http://localhost:3000
-```
+- Menu **tidak bisa dijual** jika status:
+  - `DRAFT`
+  - `ARCHIVED`
+  - `INACTIVE`
+- Stok tidak boleh minus
+- Jika stok habis → status otomatis `OUT_OF_STOCK`
+- Menu dengan stok kosong **tidak bisa dipublish**
+- `ARCHIVED` tidak bisa langsung dipublish
 
 ---
 
 ## API Endpoints
 
 ### Menu
-- GET /menus
-- GET /menus/:id
-- POST /menus
-- PUT /menus/:id
-- DELETE /menus/:id
 
-### Stock & Sales
-- POST /menus/:id/restock
-- POST /menus/:id/sell
+| Method | Endpoint     | Deskripsi             |
+| ------ | ------------ | --------------------- |
+| GET    | `/menus`     | Ambil semua menu      |
+| GET    | `/menus/:id` | Ambil menu by ID      |
+| POST   | `/menus`     | Tambah menu baru      |
+| PUT    | `/menus/:id` | Update data menu      |
+| DELETE | `/menus/:id` | Soft delete (archive) |
 
 ---
 
-## Notes
+### Stock & Transaction
 
-- Migrasi dari in-memory ke PostgreSQL
-- Fokus backend & clean architecture
-- Cocok untuk portfolio Junior Backend Developer
+| Method | Endpoint             | Deskripsi                |
+| ------ | -------------------- | ------------------------ |
+| POST   | `/menus/:id/restock` | Tambah stok              |
+| POST   | `/menus/:id/sell`    | Jual menu (kurangi stok) |
+| PUT    | `/menus/:id/qty`     | Update qty manual        |
+
+---
+
+### Status Action
+
+| Method | Endpoint              | Deskripsi              |
+| ------ | --------------------- | ---------------------- |
+| PUT    | `/menus/:id/publish`  | Publish menu           |
+| PUT    | `/menus/:id/inactive` | Inactive menu          |
+| PUT    | `/menus/:id/archive`  | Archive menu           |
+| DELETE | `/menus/:id/purge`    | Hard delete (permanen) |
+
+---
+
+## Design Decisions
+
+- **Status tidak diubah lewat update menu biasa** → lebih aman
+- Soft delete menggunakan `ARCHIVED`
+- Hard delete (`purge`) dipisah untuk admin/maintenance
+- Business logic disimpan di service layer
+
+---
+
+## API Testing
+
+Semua endpoint telah diuji menggunakan **Postman Collection**.
+
+---
+
+## Setup Project
+
+```bash
+npm install
+npm run dev
+```
+
+Pastikan PostgreSQL sudah berjalan dan environment variable sudah di-set.
+
+---
+
+## Future Improvement
+
+- Authentication & Role (Admin / Cashier)
+- Transaction history
+- Pagination & filtering
+- Unit & integration testing
 
 ---
 
 ## Author
 
-Rifqi Pratama  
+Rifqi Pratama
 Junior Backend Developer
