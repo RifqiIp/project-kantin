@@ -126,6 +126,12 @@ Pastikan PostgreSQL sudah berjalan dan environment variable sudah di-set.
 
 ---
 
+## Note:
+This project uses raw SQL with the Repository pattern.
+The `models` folder is reserved for future ORM-based implementation.
+
+---
+
 ## Author
 
 Rifqi Pratama

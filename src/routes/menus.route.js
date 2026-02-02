@@ -3,9 +3,10 @@ const controller = require("../controllers/menus.controller");
 
 const router = express.Router();
 
+router.get("/stats", controller.getMenuStats);
+
 router.get("/", controller.getMenus);
 router.post("/", controller.createMenu);
-router.get("/stats", controller.getMenuStats);
 
 router.post("/:id/restock", controller.restockMenu);
 router.post("/:id/updateQty", controller.updateQty);
