@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get("/", controller.getMenus);
 router.post("/", controller.createMenu);
+router.get("/stats", controller.getMenuStats);
 
 router.post("/:id/restock", controller.restockMenu);
 router.post("/:id/updateQty", controller.updateQty);
@@ -19,6 +20,5 @@ router.delete("/:id/purge", controller.purgeMenu);
 
 router.get("/:id", controller.getMenuById);
 router.put("/:id", controller.updateMenu);
-// router.delete("/:id", controller.deleteMenu);
 
 module.exports = router;

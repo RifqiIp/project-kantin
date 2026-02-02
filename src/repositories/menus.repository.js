@@ -79,6 +79,30 @@ updateStatus = async (id, status) => {
   return result.rows[0];
 };
 
+const getMenuStats = async () => {
+  const result = await db.query(`
+    SELECT
+      COUNT(*) AS total_menu,
+      COALESCE(SUM(sold_qty * price), 0) AS total_revenue,
+      MAX(price) AS highest_price,
+      MIN(price) AS lowest_price
+    FROM menus
+    WHERE status = 'PUBLISHED'
+  `);
+
+  const topSelling = await db.query(`
+    SELECT id, name, sold_qty
+    FROM menus
+    ORDER BY sold_qty DESC
+    LIMIT 1
+  `);
+
+  return {
+    ...result.rows[0],
+    top_selling: topSelling.rows[0] || null,
+  };
+};
+
 module.exports = {
   getAllMenus,
   getMenuById,
@@ -90,4 +114,5 @@ module.exports = {
   updateQty,
   sellMenu,
   updateStatus,
+  getMenuStats,
 };

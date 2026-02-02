@@ -152,6 +152,10 @@ const archiveMenu = async (id) => {
   return await menusRepository.updateStatus(id, STATUS.ARCHIVED);
 };
 
+const getMenuStats = async () => {
+  return await menusRepository.getMenuStats();
+};
+
 module.exports = {
   getAllMenus,
   getMenuById,
@@ -165,4 +169,5 @@ module.exports = {
   publishMenu,
   inactiveMenu,
   archiveMenu,
+  getMenuStats,
 };
