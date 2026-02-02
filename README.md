@@ -128,5 +128,5 @@ Pastikan PostgreSQL sudah berjalan dan environment variable sudah di-set.
 
 ## Author
 
-Rifqi Pratama
+Rifqi Pratama  
 Junior Backend Developer
