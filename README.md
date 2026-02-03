@@ -91,6 +91,20 @@ Menu memiliki lifecycle status untuk menjaga konsistensi bisnis:
 
 ---
 
+### Statistics
+
+| Method | Endpoint        | Deskripsi                      |
+|--------|-----------------|--------------------------------|
+| GET    | `/menus/stats`  | Ringkasan statistik menu       |
+
+Statistik yang disediakan:
+- Total menu published
+- Total revenue
+- Harga tertinggi & terendah
+- Menu paling laku
+
+---
+
 ## Design Decisions
 
 - **Status tidak diubah lewat update menu biasa** → lebih aman
@@ -102,7 +116,8 @@ Menu memiliki lifecycle status untuk menjaga konsistensi bisnis:
 
 ## API Testing
 
-Semua endpoint telah diuji menggunakan **Postman Collection**.
+Semua endpoint telah diuji menggunakan **Postman Collection**  
+(Postman collection disertakan di repository).
 
 ---
 
@@ -121,14 +136,15 @@ Pastikan PostgreSQL sudah berjalan dan environment variable sudah di-set.
 
 - Authentication & Role (Admin / Cashier)
 - Transaction history
+- Advanced reporting & analytics
 - Pagination & filtering
 - Unit & integration testing
 
 ---
 
 ## Note:
-This project uses raw SQL with the Repository pattern.
-The `models` folder is reserved for future ORM-based implementation.
+Project ini menggunakan raw SQL dengan Repository Pattern.
+Folder `models` disiapkan untuk kemungkinan migrasi ke ORM di versi selanjutnya.
 
 ---
 
